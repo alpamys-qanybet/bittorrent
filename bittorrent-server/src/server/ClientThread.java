@@ -11,16 +11,14 @@ import java.util.LinkedList;
 
 public class ClientThread extends Thread
 {
-	private LinkedList <ClientThread> thread_list;
 	private Socket clientSocket = null;
 	private ObjectInputStream is = null;
 	private ObjectOutputStream os = null;
 	private boolean stop;
 	
-	public ClientThread (Socket clientSocket, LinkedList<ClientThread> thread_list)
+	public ClientThread (Socket clientSocket)
 	{
 		this.clientSocket = clientSocket;
-		this.thread_list = thread_list;
 	}
 	
 	public void run()
@@ -35,9 +33,9 @@ public class ClientThread extends Thread
 			{
 				String content = (String) is.readObject();
 				
-				System.out.println( "Server says: " + content + " not found!" );
+				System.out.println( "Server read: " + content + "!" );
 				
-				os.writeObject( "Server says: " + content + " not found!" );
+				os.writeObject( "0.0.0.0" );
 				
 				System.out.println( "Server sent!" );
 			}
@@ -45,7 +43,6 @@ public class ClientThread extends Thread
 			is.close();
 			os.close();
 			clientSocket.close();
-			thread_list.remove(this);
 		}
 		
 		catch (Exception e)

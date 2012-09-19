@@ -1,4 +1,4 @@
-package server;
+package bittorrent.server;
 
 /**
  * @author about.me/alpamys.kanibetov
@@ -9,17 +9,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.LinkedList;
 
-public class Server
+import app.Main;
+
+public class TorrentServer
 {
 	private ServerSocket serverSocket = null;
 	private Socket clientSocket = null;
+	private SendThread sendThread;
 	
-	public Server() {}
+	public TorrentServer() {}
 	
-	public void connect (int port)
+	public void connect ()
 	{
 		try
-		{ serverSocket = new ServerSocket(port); }
+		{ serverSocket = new ServerSocket(Main.TORRENTSERVERPORT); }
 		
 		catch(IOException e)
 		{ e.printStackTrace(); }
@@ -31,8 +34,11 @@ public class Server
 			{
 				clientSocket = serverSocket.accept();
 				
-				ClientThread clientThread = new ClientThread( clientSocket );
-				clientThread.start();
+				System.out.println("Torrent Server/ port: " + serverSocket.getLocalPort() );
+				
+				sendThread = new SendThread( clientSocket );
+				sendThread.start();
+				sendThread.sendData();
 			}
 			
 			catch (Exception e)

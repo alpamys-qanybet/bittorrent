@@ -1,9 +1,10 @@
-package client;
+package bittorrent.client;
 
 /**
  * @author about.me/alpamys.kanibetov
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -40,23 +41,22 @@ public class ReceiveThread extends Thread
 		{ e.printStackTrace(); }
 	}
 	
-	public String receiveIpAddress()
+	public File receiveData()
 	{
-		String ipAddress = null;
-		
+		File file = null;
 		try
 		{
 			System.out.println("Receiving...");
 			
-			ipAddress = (String) is.readObject();
+			file = (File) is.readObject();
 			
-			System.out.println("Received " + ipAddress);
+			System.out.println("Received " + file.getName() + " path: " + file.getAbsolutePath());
 		}
 		
 		catch (Exception e)
 		{ e.printStackTrace(); }
 		
-		return ipAddress;
+		return file;
 	}
 	
 	public Socket getClientSocket()
