@@ -20,6 +20,7 @@ public class Client
 			
 			sendThread = new Thread( sendData = new SendData(clientSocket) );
 			sendThread.start();
+			sendData.sendRequestForFile("music.mp3");
 			
 			receiveThread = new Thread( receiveData = new ReceiveData(clientSocket) );
 			receiveThread.start();
@@ -29,34 +30,4 @@ public class Client
 			e.printStackTrace();
 		}
 	}
-
-/*
-  	public void connect(String host, int port)
- 
-	{
-		try
-		{
-			Socket socket = new Socket(host, port);
-			
-			OutputStream os = socket.getOutputStream();
-			PrintStream out = new PrintStream(os);
-			
-			out.println("some-music.mp3");
-			
-			InputStream is = socket.getInputStream();
-			Scanner in = new Scanner(is);
-			
-			System.out.println(in.nextLine());
-			
-			is.close();
-			
-			socket.close();
-			
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-*/
 }

@@ -1,5 +1,6 @@
 package client;
 
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
@@ -7,10 +8,19 @@ public class SendData implements Runnable
 {
 	private Socket clientSocket;
 	private ObjectOutputStream out;
+	private boolean stop;
 	
 	public SendData (Socket clientSocket)
 	{
 		setClientSocket(clientSocket);
+		try
+		{
+			out = new ObjectOutputStream( clientSocket.getOutputStream() );
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	public void run()
@@ -19,18 +29,10 @@ public class SendData implements Runnable
 		{
 			try
 			{
-				out = new ObjectOutputStream( clientSocket.getOutputStream() );
+				stop = false;
 				
-				while (true)
+				while (!stop)
 				{
-					String fileName = "music.mp3";
-					
-					System.out.println("Sending...");
-					
-					out.writeObject( fileName );
-					
-					System.out.println("Sent");
-					
 					Thread.sleep(500);
 				}
 			}
@@ -46,6 +48,20 @@ public class SendData implements Runnable
 		{ e.printStackTrace(); }
 	}
 
+	public void sendRequestForFile(String fileName)
+	{
+		try
+		{
+			System.out.println("Sending...");
+		
+			out.writeObject( fileName );
+			
+			System.out.println("Sent");
+		}
+		catch (Exception e)
+		{ e.printStackTrace(); }
+	}
+	
 	public Socket getClientSocket()
 	{
 		return clientSocket;
