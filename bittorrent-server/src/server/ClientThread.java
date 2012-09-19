@@ -1,5 +1,9 @@
 package server;
 
+/**
+ * @author about.me/alpamys.kanibetov
+ */
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;

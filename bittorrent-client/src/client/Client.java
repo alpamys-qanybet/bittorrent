@@ -1,14 +1,17 @@
 package client;
 
+/**
+ * @author about.me/alpamys.kanibetov
+ */
+
 import java.io.IOException;
 import java.net.Socket;
 
 public class Client
 {
 	private Socket clientSocket;
-	private Thread sendThread, receiveThread;
-	private SendData sendData;
-	private ReceiveData receiveData;
+	private SendThread sendThread;
+	private ReceiveThread receiveThread;
 	
 	public Client() {}
 	
@@ -18,16 +21,17 @@ public class Client
 		{
 			clientSocket = new Socket(host, port);
 			
-			sendThread = new Thread( sendData = new SendData(clientSocket) );
+			sendThread = new SendThread(clientSocket);
 			sendThread.start();
-			sendData.sendRequestForFile("music.mp3");
 			
-			receiveThread = new Thread( receiveData = new ReceiveData(clientSocket) );
+			receiveThread = new ReceiveThread(clientSocket);
 			receiveThread.start();
+			
+			sendThread.sendRequestForFile("music.mp3");
+			receiveThread.receiveServerData();
 		}
+		
 		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
+		{ e.printStackTrace(); }
 	}
 }

@@ -1,4 +1,9 @@
 package client;
+
+/**
+ * @author about.me/alpamys.kanibetov
+ */
+
 public class Main
 {
 	public static void main(String [] args)

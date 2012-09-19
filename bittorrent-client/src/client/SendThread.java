@@ -1,47 +1,41 @@
 package client;
 
+/**
+ * @author about.me/alpamys.kanibetov
+ */
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class SendData implements Runnable
+public class SendThread extends Thread
 {
 	private Socket clientSocket;
-	private ObjectOutputStream out;
+	private ObjectOutputStream os;
 	private boolean stop;
 	
-	public SendData (Socket clientSocket)
+	public SendThread (Socket clientSocket)
 	{
 		setClientSocket(clientSocket);
 		try
 		{
-			out = new ObjectOutputStream( clientSocket.getOutputStream() );
+			os = new ObjectOutputStream( clientSocket.getOutputStream() );
 		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
+		
+		catch (IOException e)
+		{ e.printStackTrace(); }
 	}
 	
 	public void run()
 	{
 		try
 		{
-			try
-			{
-				stop = false;
+			stop = false;
 				
-				while (!stop)
-				{
-					Thread.sleep(500);
-				}
-			}
+			while (!stop)
+				Thread.sleep(500);
 			
-			catch(Exception e)
-			{ e.printStackTrace(); }
-			
-			finally
-			{ clientSocket.close(); }
+			clientSocket.close();
 		}
 		
 		catch(Exception e)
@@ -54,10 +48,11 @@ public class SendData implements Runnable
 		{
 			System.out.println("Sending...");
 		
-			out.writeObject( fileName );
+			os.writeObject( fileName );
 			
 			System.out.println("Sent");
 		}
+		
 		catch (Exception e)
 		{ e.printStackTrace(); }
 	}
