@@ -4,15 +4,18 @@ package bittorrent.server;
  * @author about.me/alpamys.kanibetov
  */
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class SendThread extends Thread
 {
 	private Socket clientSocket = null;
-	private ObjectOutputStream os = null;
+	private OutputStream os = null;
 	private boolean stop;
 	
 	public SendThread (Socket clientSocket)
@@ -21,7 +24,7 @@ public class SendThread extends Thread
 		
 		try
 		{
-			os = new ObjectOutputStream( clientSocket.getOutputStream() );
+			os = clientSocket.getOutputStream();
 		}
 		
 		catch (IOException e)
@@ -50,8 +53,30 @@ public class SendThread extends Thread
 		try
 		{
 			System.out.println("TorrentServer Sending...");
-			File file = new File("/home/alpamys/a.in");
-			os.writeObject(file);
+			
+			File file = new File("Hope.wmv");
+		    // Get the size of the file
+		    long length = file.length();
+		    
+		    if (length > Integer.MAX_VALUE)
+		        System.out.println("File is too large.");
+		    
+		    byte[] bytes = new byte[(int) length];
+		    FileInputStream fis = new FileInputStream(file);
+		    BufferedInputStream bis = new BufferedInputStream(fis);
+		    BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
+
+		    int count;
+
+		    while ((count = bis.read(bytes)) > 0) {
+		        out.write(bytes, 0, count);
+		    }
+
+		    out.flush();
+		    out.close();
+		    fis.close();
+		    bis.close();
+
 			System.out.println("TorrentServer Sent!");
 		}
 		

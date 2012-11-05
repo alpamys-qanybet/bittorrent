@@ -32,7 +32,7 @@ public class Client
 			receiveThread = new ReceiveThread(clientSocket);
 			receiveThread.start();
 			
-			sendThread.sendRequestForFile("a.in");
+			sendThread.sendRequestForFile("a.txt");
 			ipAddress = receiveThread.receiveIpAddress(); // ipAddresses with parts, partial downloading(receiving data)
 			
 			TorrentClient torrentClient = new TorrentClient();
