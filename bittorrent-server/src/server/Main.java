@@ -6,9 +6,17 @@ package server;
 
 public class Main
 {
+	static Server server;
+	static DBManager dbmanager;
+	
 	public static void main(String [] args)
 	{
-		Server server = new Server();
+		dbmanager = new DBManager();
+		server = new Server();
+		
+		dbmanager.connect();
+		dbmanager.createTables();
+		
 		server.connect(7122);
 	}
 }

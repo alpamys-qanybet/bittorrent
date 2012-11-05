@@ -31,15 +31,25 @@ public class Client
 			
 			receiveThread = new ReceiveThread(clientSocket);
 			receiveThread.start();
-			
-			sendThread.sendRequestForFile("a.txt");
-			ipAddress = receiveThread.receiveIpAddress(); // ipAddresses with parts, partial downloading(receiving data)
-			
-			TorrentClient torrentClient = new TorrentClient();
-			torrentClient.connect(ipAddress);
 		}
 		
 		catch(IOException e)
 		{ e.printStackTrace(); }
+	}
+	
+	public void sendRequestForFile(String fileName)
+	{
+		sendThread.sendRequestForFile(fileName);
+		System.out.println("Sent file request : " + fileName);
+		
+		ipAddress = receiveThread.receiveIpAddress(); // ipAddresses with parts, partial downloading(receiving data)
+		TorrentClient torrentClient = new TorrentClient();
+		torrentClient.connect(ipAddress);
+	}
+	
+	public void sendFileInfo(String fileName, int chunks)
+	{
+		sendThread.sendFileInfo(fileName + "/" +chunks);
+		System.out.println("Sent file info : " + fileName + "/" + chunks);
 	}
 }

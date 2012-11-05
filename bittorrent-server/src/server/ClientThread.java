@@ -30,7 +30,30 @@ public class ClientThread extends Thread
 			
 			while (!stop)
 			{
-				String content = (String) is.readObject();
+				String[] content = (String[]) is.readObject();
+				
+				if (content[0].equals("upload"))
+				{
+					String fileInfo = content[1];
+					System.out.println("File upload "+fileInfo);
+					
+					String fileName = fileInfo.substring(0, fileInfo.indexOf('/'));
+					int chunks = Integer.parseInt( fileInfo.substring(fileInfo.indexOf('/') + 1) );
+					
+					System.out.println("client ipaddress " + clientSocket.getInetAddress().getHostAddress());
+					
+					int userId = Main.dbmanager.insertUser(clientSocket.getInetAddress().getHostAddress());
+					
+					for (int i=0; i<=chunks; i++)
+					{
+						Main.dbmanager.insertFile(userId, fileName, i);
+						System.out.println(i);
+					}
+				}
+				else if (content[0].equals("download"))
+				{
+					
+				}
 				
 				System.out.println( "Server read: " + content + "!" );
 				

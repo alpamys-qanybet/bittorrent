@@ -41,16 +41,29 @@ public class SendThread extends Thread
 		catch(Exception e)
 		{ e.printStackTrace(); }
 	}
+	
+	public void sendFileInfo(String fileInfo)
+	{
+		try
+		{
+			String [] content = new String[2];
+			content[0] = "upload";
+			content[1] = fileInfo;
+			os.writeObject( content );
+		}
+		
+		catch (Exception e)
+		{ e.printStackTrace(); }
+	}
 
 	public void sendRequestForFile(String fileName)
 	{
 		try
 		{
-			System.out.println("Sending...");
-		
-			os.writeObject( fileName );
-			
-			System.out.println("Sent");
+			String [] content = new String[2];
+			content[0] = "download";
+			content[1] = fileName;
+			os.writeObject( content );
 		}
 		
 		catch (Exception e)
