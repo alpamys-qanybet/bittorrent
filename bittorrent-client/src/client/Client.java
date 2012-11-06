@@ -37,14 +37,22 @@ public class Client
 		{ e.printStackTrace(); }
 	}
 	
-	public void sendRequestForFile(String fileName)
+	public void sendRequestForFile(String fileName, int part)
 	{
-		sendThread.sendRequestForFile(fileName);
-		System.out.println("Sent file request : " + fileName);
+		sendThread.sendRequestForFile(fileName, part);
+		System.out.println("Sent file request : " + fileName + " part " + part);
 		
 		ipAddress = receiveThread.receiveIpAddress(); // ipAddresses with parts, partial downloading(receiving data)
+		if (ipAddress == null)
+			return;
+		
 		TorrentClient torrentClient = new TorrentClient();
 		torrentClient.connect(ipAddress);
+		torrentClient.sendRequest(fileName, part);
+		torrentClient.receiveData(fileName, part);
+		
+		sendRequestForFile(fileName, ++part);
+		// need to disconnect
 	}
 	
 	public void sendFileInfo(String fileName, int chunks)

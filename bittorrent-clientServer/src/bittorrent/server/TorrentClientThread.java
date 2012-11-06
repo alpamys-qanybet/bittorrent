@@ -9,21 +9,25 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class SendThread extends Thread
+public class TorrentClientThread extends Thread
 {
 	private Socket clientSocket = null;
+	private ObjectInputStream is = null;
 	private OutputStream os = null;
 	private boolean stop;
 	
-	public SendThread (Socket clientSocket)
+	public TorrentClientThread (Socket clientSocket)
 	{
 		this.clientSocket = clientSocket;
 		
 		try
 		{
+			is = new ObjectInputStream(clientSocket.getInputStream());
 			os = clientSocket.getOutputStream();
 		}
 		
@@ -48,13 +52,27 @@ public class SendThread extends Thread
 		{ e.printStackTrace(); }
 	}
 	
-	public void sendData()
+	public void receiveRequest()
+	{
+		try
+		{
+			String[] content = (String[]) is.readObject();
+			String fileName = content[0];
+			int part = Integer.parseInt(content[1]);
+			
+			sendData(fileName, part);
+		}
+		catch (Exception e)
+		{ e.printStackTrace(); }
+	}
+	
+	public void sendData(String fileName, int part)
 	{
 		try
 		{
 			System.out.println("TorrentServer Sending...");
 			
-			File file = new File("Hope.wmv");
+			File file = new File("/home/alpamys/dev/soft/bittorrent/upload/" + fileName + "/" + part);
 		    // Get the size of the file
 		    long length = file.length();
 		    
@@ -68,10 +86,9 @@ public class SendThread extends Thread
 
 		    int count;
 
-		    while ((count = bis.read(bytes)) > 0) {
+		    while ((count = bis.read(bytes)) > 0)
 		        out.write(bytes, 0, count);
-		    }
-
+		    
 		    out.flush();
 		    out.close();
 		    fis.close();

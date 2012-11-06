@@ -52,9 +52,36 @@ public class DBManager
         { e.printStackTrace(); }
     }
     
-    public int insertUser(String ipaddress)
+    public int userExists(String ipaddress)
     {
     	int id = -1;
+    	try
+    	{
+    		String query = "SELECT id " +
+						   "FROM users " +
+					       "WHERE ipaddress = ?";
+			PreparedStatement pstmt = con.prepareStatement(query);
+			pstmt.setString(1, ipaddress);
+			
+			ResultSet rs = pstmt.executeQuery();
+			if ( rs.next() )
+				id = rs.getInt("id");
+			
+			pstmt.close();
+			rs.close();
+    	}
+    	catch (Exception e)
+    	{ e.printStackTrace(); }
+    	
+    	return id;
+    }
+    
+    public int insertUser(String ipaddress)
+    {
+    	int id = userExists(ipaddress);
+    	if (id != -1)
+    		return id;
+    	
         try
         {
         	String query = "INSERT INTO users VALUES (DEFAULT,?,TRUE);";
@@ -68,6 +95,7 @@ public class DBManager
         	id = keys.getInt(1);
         	
         	pstmt.close();
+        	keys.close();
 	    }
         catch (Exception e)
         { e.printStackTrace(); }
@@ -91,5 +119,35 @@ public class DBManager
         }
         catch (Exception e)
         { e.printStackTrace(); }
+    }
+    
+    public String searchFileHoster(String fileName, int part)
+    {
+    	String ipaddress = null;
+    	try
+    	{
+    		String query = "SELECT u.ipaddress AS userhost " +
+    					   "FROM users u, files f " +
+    					   "WHERE u.id = f.user_id " + 
+    					   "AND f.fileName = ? " +
+    					   "AND f.part = ? " + 
+    					   "AND u.online = ?";
+    		
+    		PreparedStatement pstmt = con.prepareStatement(query);
+    		pstmt.setString(1, fileName);
+    		pstmt.setInt(2, part);
+    		pstmt.setBoolean(3, true);
+    		
+    		ResultSet rs = pstmt.executeQuery();
+    		if ( rs.next() )
+    			ipaddress = rs.getString("userhost");
+    		
+    		pstmt.close();
+    		rs.close();
+    	}
+    	catch (Exception e)
+    	{ e.printStackTrace(); }
+    	
+    	return ipaddress;
     }
 }

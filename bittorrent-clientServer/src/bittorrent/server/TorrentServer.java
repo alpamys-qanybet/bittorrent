@@ -15,7 +15,7 @@ public class TorrentServer
 {
 	private ServerSocket serverSocket = null;
 	private Socket clientSocket = null;
-	private SendThread sendThread;
+	private TorrentClientThread torrentClientThread;
 	
 	public TorrentServer() {}
 	
@@ -36,9 +36,9 @@ public class TorrentServer
 				
 				System.out.println("Torrent Server/ port: " + serverSocket.getLocalPort() );
 				
-				sendThread = new SendThread( clientSocket );
-				sendThread.start();
-				sendThread.sendData();
+				torrentClientThread = new TorrentClientThread( clientSocket );
+				torrentClientThread.start();
+				torrentClientThread.receiveRequest();
 			}
 			
 			catch (Exception e)

@@ -52,14 +52,14 @@ public class ClientThread extends Thread
 				}
 				else if (content[0].equals("download"))
 				{
+					String fileName = content[1];
+					int part = Integer.parseInt(content[2]);
 					
+					String ipaddress = Main.dbmanager.searchFileHoster(fileName, part);
+					os.writeObject(ipaddress);
+					
+					System.out.println( ipaddress + " contains file " + fileName + ", part " + part );
 				}
-				
-				System.out.println( "Server read: " + content + "!" );
-				
-				os.writeObject( "0.0.0.0" );
-				
-				System.out.println( "Server sent!" );
 			}
 			
 			is.close();

@@ -1,4 +1,4 @@
-package client;
+package bittorrent.client;
 
 /**
  * @author about.me/alpamys.kanibetov
@@ -10,13 +10,14 @@ import java.net.Socket;
 
 public class SendThread extends Thread
 {
-	private Socket clientSocket;
-	private ObjectOutputStream os;
+	private Socket clientSocket = null;
+	private ObjectOutputStream os = null;
 	private boolean stop;
 	
 	public SendThread (Socket clientSocket)
 	{
-		setClientSocket(clientSocket);
+		this.clientSocket = clientSocket;
+		
 		try
 		{
 			os = new ObjectOutputStream( clientSocket.getOutputStream() );
@@ -31,53 +32,29 @@ public class SendThread extends Thread
 		try
 		{
 			stop = false;
-				
+			
 			while (!stop)
 				Thread.sleep(500);
 			
+			os.close();
 			clientSocket.close();
 		}
 		
-		catch(Exception e)
+		catch (Exception e)
 		{ e.printStackTrace(); }
 	}
 	
-	public void sendFileInfo(String fileInfo)
+	public void sendRequest(String fileName, int part)
 	{
 		try
 		{
 			String [] content = new String[2];
-			content[0] = "upload";
-			content[1] = fileInfo;
+			content[0] = fileName;
+			content[1] = Integer.toString(part);
 			os.writeObject( content );
 		}
 		
 		catch (Exception e)
 		{ e.printStackTrace(); }
-	}
-
-	public void sendRequestForFile(String fileName, int part)
-	{
-		try
-		{
-			String [] content = new String[3];
-			content[0] = "download";
-			content[1] = fileName;
-			content[2] = Integer.toString(part);
-			os.writeObject( content );
-		}
-		
-		catch (Exception e)
-		{ e.printStackTrace(); }
-	}
-	
-	public Socket getClientSocket()
-	{
-		return clientSocket;
-	}
-
-	public void setClientSocket(Socket clientSocket)
-	{
-		this.clientSocket = clientSocket;
 	}
 }

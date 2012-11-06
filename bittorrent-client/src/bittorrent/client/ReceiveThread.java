@@ -52,7 +52,7 @@ public class ReceiveThread extends Thread
 		{ e.printStackTrace(); }
 	}
 	
-	public void receiveData()
+	public void receiveData(String fileName, int part)
 	{
 		try
 		{
@@ -61,16 +61,20 @@ public class ReceiveThread extends Thread
 			bufferSize = clientSocket.getReceiveBufferSize();
 	        System.out.println("Buffer size: " + bufferSize);
 		 
-			fos = new FileOutputStream("Hope-copy.wmv");
+	        File tempDir = new File("/home/alpamys/dev/soft/bittorrent/download/" + fileName);
+	        if ( !tempDir.exists() )
+            	tempDir.mkdirs();
+	        
+			fos = new FileOutputStream(tempDir.getPath() + "/" + part);
 		    bos = new BufferedOutputStream(fos);
 		    
 		    byte[] bytes = new byte[bufferSize];
 
 		    int count;
 
-		    while ((count = is.read(bytes)) > 0) {
+		    while ((count = is.read(bytes)) > 0)
 		        bos.write(bytes, 0, count);
-		    }
+		    
 
 		    bos.flush();
 		    bos.close();

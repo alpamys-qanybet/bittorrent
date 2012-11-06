@@ -12,6 +12,7 @@ import app.Main;
 public class TorrentClient
 {
 	private Socket clientSocket;
+	private SendThread sendThread;
 	private ReceiveThread receiveThread;
 	
 	public TorrentClient() {}
@@ -22,13 +23,24 @@ public class TorrentClient
 		{
 			clientSocket = new Socket(host, Main.TORRENTSERVERPORT);
 			
+			sendThread = new SendThread(clientSocket);
 			receiveThread = new ReceiveThread(clientSocket);
-			receiveThread.start();
 			
-			receiveThread.receiveData();
+			sendThread.start();
+			receiveThread.start();
 		}
 		
 		catch(IOException e)
 		{ e.printStackTrace(); }
+	}
+	
+	public void sendRequest(String fileName, int part)
+	{
+		sendThread.sendRequest(fileName, part);
+	}
+	
+	public void receiveData(String fileName, int part)
+	{
+		receiveThread.receiveData(fileName, part);
 	}
 }

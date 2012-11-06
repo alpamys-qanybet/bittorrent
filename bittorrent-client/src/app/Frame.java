@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -37,13 +38,21 @@ public class Frame extends JFrame
 
 class Panel extends JPanel implements ActionListener
 {
-	private JButton sendButton;
+	private JButton downloadButton, sendButton;
 	private final JFileChooser fileChooser;
+	private JTextField textField;
 	
 	public Panel()
 	{
+		textField = new JTextField(20);
+		downloadButton = new JButton("Download");
+		downloadButton.addActionListener(this);
+		
+		add(textField);
+		add(downloadButton);
+		
 		fileChooser = new JFileChooser();
-		sendButton = new JButton("Send file");
+		sendButton = new JButton("Upload");
 		sendButton.addActionListener(this);
 		
 		add(sendButton);
@@ -52,7 +61,14 @@ class Panel extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		if (e.getSource() == sendButton)
+		if (e.getSource() == downloadButton)
+		{
+			String fileName = textField.getText();
+			
+			Main.processor.getClient().sendRequestForFile(fileName, 0);
+		}
+		
+		else if (e.getSource() == sendButton)
 		{
 			int returnVal = fileChooser.showOpenDialog(this);
 			
@@ -70,9 +86,9 @@ class Panel extends JPanel implements ActionListener
                     FileInputStream fis = new FileInputStream(file);
                     FileOutputStream fos;
                     
-                    File tempDir = new File("bittorrent_files");
+                    File tempDir = new File("/home/alpamys/dev/soft/bittorrent/upload");
                     if ( !tempDir.exists() )
-                    	tempDir.mkdir();
+                    	tempDir.mkdirs();
                 
                     File fileDir = new File(tempDir.getPath() + "/" + file.getName());
                     fileDir.mkdir();
