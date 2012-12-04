@@ -86,7 +86,7 @@ class Panel extends JPanel implements ActionListener
                     FileInputStream fis = new FileInputStream(file);
                     FileOutputStream fos;
                     
-                    File tempDir = new File("/home/alpamys/dev/soft/bittorrent/upload");
+                    File tempDir = new File("/home/alpamys/dev/soft/bittorrent/files");
                     if ( !tempDir.exists() )
                     	tempDir.mkdirs();
                 

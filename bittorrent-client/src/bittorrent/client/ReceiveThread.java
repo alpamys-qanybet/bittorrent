@@ -61,7 +61,7 @@ public class ReceiveThread extends Thread
 			bufferSize = clientSocket.getReceiveBufferSize();
 	        System.out.println("Buffer size: " + bufferSize);
 		 
-	        File tempDir = new File("/home/alpamys/dev/soft/bittorrent/download/" + fileName);
+	        File tempDir = new File("/home/alpamys/dev/soft/bittorrent/files/" + fileName);
 	        if ( !tempDir.exists() )
             	tempDir.mkdirs();
 	        

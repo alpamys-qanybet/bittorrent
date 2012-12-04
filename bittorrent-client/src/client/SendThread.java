@@ -71,6 +71,22 @@ public class SendThread extends Thread
 		{ e.printStackTrace(); }
 	}
 	
+	public void informDownload(String ipAddress, String fileName, int part)
+	{
+		try
+		{
+			String [] content = new String[4];
+			content[0] = "inform_download";
+			content[1] = ipAddress;
+			content[2] = fileName;
+			content[3] = Integer.toString(part);
+			os.writeObject( content );
+		}
+		
+		catch (Exception e)
+		{ e.printStackTrace(); }
+	}
+	
 	public Socket getClientSocket()
 	{
 		return clientSocket;

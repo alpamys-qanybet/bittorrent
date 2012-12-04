@@ -12,7 +12,7 @@ public class Processor
 	public void createClient()
 	{
 		client = new Client();
-		client.connect("0.0.0.0");
+		client.connect("192.168.0.1"); //localhost
 	}
 	
 	public void showApp()

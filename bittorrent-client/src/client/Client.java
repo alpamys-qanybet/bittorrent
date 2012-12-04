@@ -50,6 +50,7 @@ public class Client
 		torrentClient.connect(ipAddress);
 		torrentClient.sendRequest(fileName, part);
 		torrentClient.receiveData(fileName, part);
+		informDownload(ipAddress, fileName, part);
 		
 		sendRequestForFile(fileName, ++part);
 		// need to disconnect
@@ -59,5 +60,11 @@ public class Client
 	{
 		sendThread.sendFileInfo(fileName + "/" +chunks);
 		System.out.println("Sent file info : " + fileName + "/" + chunks);
+	}
+	
+	public void informDownload(String ipAddress, String fileName, int part)
+	{
+		sendThread.informDownload(ipAddress, fileName, part);
+		System.out.println("inform download : " + fileName + "/" + part);
 	}
 }

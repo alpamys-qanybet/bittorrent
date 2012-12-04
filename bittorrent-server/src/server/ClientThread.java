@@ -28,6 +28,8 @@ public class ClientThread extends Thread
 			os = new ObjectOutputStream( clientSocket.getOutputStream() );
 			stop = false;
 			
+			System.out.println("*** connected client ipaddress " + clientSocket.getInetAddress().getHostAddress());
+			
 			while (!stop)
 			{
 				String[] content = (String[]) is.readObject();
@@ -54,11 +56,21 @@ public class ClientThread extends Thread
 				{
 					String fileName = content[1];
 					int part = Integer.parseInt(content[2]);
-					
+
+					Main.dbmanager.insertUser(clientSocket.getInetAddress().getHostAddress());
 					String ipaddress = Main.dbmanager.searchFileHoster(fileName, part);
 					os.writeObject(ipaddress);
 					
 					System.out.println( ipaddress + " contains file " + fileName + ", part " + part );
+				}
+				else if (content[0].equals("inform_download"))
+				{
+					String ipAddress = content[1];
+					String fileName = content[2];
+					int part = Integer.parseInt(content[3]);
+					
+					String newIpAddress = clientSocket.getInetAddress().getHostAddress();
+					Main.dbmanager.changeAvailability(ipAddress, newIpAddress, fileName, part);
 				}
 			}
 			

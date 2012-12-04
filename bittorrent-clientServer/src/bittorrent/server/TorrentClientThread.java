@@ -72,7 +72,7 @@ public class TorrentClientThread extends Thread
 		{
 			System.out.println("TorrentServer Sending...");
 			
-			File file = new File("/home/alpamys/dev/soft/bittorrent/upload/" + fileName + "/" + part);
+			File file = new File("/home/alpamys/dev/soft/bittorrent/files/" + fileName + "/" + part);
 		    // Get the size of the file
 		    long length = file.length();
 		    

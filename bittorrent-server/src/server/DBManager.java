@@ -44,8 +44,8 @@ public class DBManager
         try
         {
         	Statement stmt = con.createStatement();
-	        stmt.execute("CREATE TABLE users ( id SERIAL PRIMARY KEY, ipaddress CHAR(30), online BOOLEAN)");
-	        stmt.execute("CREATE TABLE files ( user_id INTEGER, filename CHAR(100), part INTEGER)");
+	        stmt.execute("CREATE TABLE users ( id SERIAL PRIMARY KEY, ipaddress CHAR(30))");
+	        stmt.execute("CREATE TABLE files ( user_id INTEGER, filename CHAR(100), part INTEGER, available BOOLEAN)");
 	        stmt.close();
         }
         catch (Exception e)
@@ -84,7 +84,7 @@ public class DBManager
     	
         try
         {
-        	String query = "INSERT INTO users VALUES (DEFAULT,?,TRUE);";
+        	String query = "INSERT INTO users VALUES (DEFAULT,?);";
         	PreparedStatement pstmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
         	pstmt.setString(1, ipaddress);
@@ -107,7 +107,7 @@ public class DBManager
     {
     	try
         {
-    		String query = "INSERT INTO files VALUES (?,?,?);";
+    		String query = "INSERT INTO files VALUES (?,?,?,TRUE);";
         	PreparedStatement pstmt = con.prepareStatement(query);
         	
 	        pstmt.setInt(1, userId);
@@ -131,7 +131,7 @@ public class DBManager
     					   "WHERE u.id = f.user_id " + 
     					   "AND f.fileName = ? " +
     					   "AND f.part = ? " + 
-    					   "AND u.online = ?";
+    					   "AND f.available = ?";
     		
     		PreparedStatement pstmt = con.prepareStatement(query);
     		pstmt.setString(1, fileName);
@@ -149,5 +149,62 @@ public class DBManager
     	{ e.printStackTrace(); }
     	
     	return ipaddress;
+    }
+    
+    public void changeAvailability(String ipAddress, String newIpAddress, String fileName, int part)
+    {
+    	try
+    	{
+    		System.out.println("ipAddress: " + ipAddress + "new: " + newIpAddress);
+    		int userId = 0;
+    		
+    		String query = "SELECT id " +
+						   "FROM users " +
+						   "WHERE ipaddress = ?";
+		
+			PreparedStatement pstmtSelect = con.prepareStatement(query);
+			pstmtSelect.setString(1, ipAddress);
+			
+			ResultSet rs = pstmtSelect.executeQuery();
+			if ( rs.next() )
+				userId = rs.getInt("id");
+			
+			rs.close();
+    		
+    		String queryUpdate = "UPDATE files SET available = ? " +
+	    					     "WHERE user_id = ? " + 
+	    					     "AND fileName = ? " +
+	    					     "AND part = ? ";
+    		
+    		PreparedStatement pstmtUpdate = con.prepareStatement(queryUpdate);
+    		pstmtUpdate.setBoolean(1, false);
+    		pstmtUpdate.setInt(2, userId);
+    		pstmtUpdate.setString(3, fileName);
+    		pstmtUpdate.setInt(4, part);
+ 
+    		pstmtUpdate.execute();
+    		
+    		
+    		pstmtSelect.setString(1, newIpAddress);
+			
+			rs = pstmtSelect.executeQuery();
+			if ( rs.next() )
+				userId = rs.getInt("id");
+			
+			pstmtSelect.close();
+			rs.close();
+			
+			insertFile(userId, fileName, part);
+			
+			pstmtUpdate.setBoolean(1, true);
+    		pstmtUpdate.setInt(2, userId);
+    		pstmtUpdate.setString(3, fileName);
+    		pstmtUpdate.setInt(4, part);
+    		
+    		pstmtUpdate.execute();
+    		pstmtUpdate.close();
+    	}
+    	catch (Exception e)
+    	{ e.printStackTrace(); }
     }
 }
